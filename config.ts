@@ -13,18 +13,37 @@ const QWBT_SHEET_NAMES = {
   CHANGE_LOGS: 'Change_Logs',
 };
 
+const KEY_NAMES = {
+  TIMESTAMP: 'Timestamp',
+  SALE_TYPE: 'Sale Type',
+  PROPERTY_ADDRESS: 'Property Address',
+  AGENT_NAME: 'Agent Name',
+  SALE_PRICE: 'Sale Price',
+  COMMISSION_RATE: 'Commission Rate',
+  MGT_NOTES: 'MNotes',
+  DOC1: 'Doc1 link',
+  MLS_NO: 'MLS No',
+  ID: 'Id',
+  SETTLEMENT_DATE: 'Settlement Date',
+  AOS_DATE: 'AoS Date',
+  QW_AGENT_2: 'QWAgent2',
+  PROJECTED_REV:'Projected Rev'
+};
+
 const QW_KEY_NAMES = {
   TIMESTAMP: 'Timestamp',
   SALE_TYPE: 'Sale Type',
   PROPERTY_ADDRESS: 'Property Address',
   AGENT_NAME: 'Agent Name',
   SALE_PRICE: 'Sale Price',
-  COMMISSION_TS: 'Commission Rate',
+  COMMISSION_RATE: 'Commission Rate',
   MGT_NOTES: 'MNotes',
   DOC1: 'Doc1 link',
   MLS_NO: 'MLS No',
   ID: 'Id',
   SETTLEMENT_DATE: 'Settlement Date',
+  AOS_DATE: 'AoS Date',
+  QW_AGENT_2: 'QWAgent2',
 
   // DRIVE_FOLDER_URL: 'Drive Folder Url',
   // SUBMITTED_TIME: 'Submitted Time',

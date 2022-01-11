@@ -15,18 +15,36 @@ interface IHeaderIndexes {
 }
 
 interface IQWLead {
-  id: string;
-  timestamp: string;
-  sale_type: string;
-  property_address: string;
-  agent_name: string;
-  sale_price: number;
-  commission: number;
-  mgt_notes: string;
-  doc1_link: string;
-  mls_no: string;
-  settlement_date: string;
+  Id: string;
+  Timestamp: string;
+  'Sale Type': string;
+  'Property Address': string;
+  'Agent Name': string;
+  'Sale Price': number;
+  'Commission Rate': number;
+  MNotes: string;
+  'Doc1 link': string;
+  'MLS No': string;
+  'Settlement Date': string;
+  'AoS Date': string;
+  QWAgent2: string;
 }
+
+// interface IQWLead {
+//   id: string;
+//   timestamp: string;
+//   sale_type: string;
+//   property_address: string;
+//   agent_name: string;
+//   sale_price: number;
+//   commission: number;
+//   mgt_notes: string;
+//   doc1_link: string;
+//   mls_no: string;
+//   settlement_date: string;
+//   aos_date: string;
+//   agent_2: string;
+// }
 
 interface ICache {
   [key: string]: {
@@ -42,4 +60,8 @@ interface ICache {
 
 interface ISheetCache {
   [key: string]: GoogleAppsScript.Spreadsheet.Sheet;
+}
+
+interface IHeadersCache {
+  [key: string]: IHeaderIndexes;
 }

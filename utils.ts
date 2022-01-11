@@ -3,9 +3,15 @@ const onOpen = () => {
     .createMenu('Menu')
     .addItem('Authorize', 'authorize')
     .addItem('Test  Script', 'calculateRevenue')
+    .addItem('Clear Cache', 'clearCache')
     .addItem('Start Script', 'startScript')
     .addItem('Stop Script', 'stopScript')
     .addToUi();
+};
+
+const clearCache = () => {
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAMES.CACHE);
+  sheet.clear();
 };
 
 const authorize = () => {

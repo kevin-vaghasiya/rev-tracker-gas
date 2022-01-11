@@ -7,7 +7,7 @@ const getHeadersAndData = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet) => {
   return { header, data };
 };
 
-const getHeaderIndexes = (
+const getQwHeaderIndexes = (
   ss: GoogleAppsScript.Spreadsheet.Spreadsheet,
   header: string[]
 ): IHeaderIndexes => {
