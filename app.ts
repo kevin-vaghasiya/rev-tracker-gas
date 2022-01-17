@@ -51,13 +51,16 @@ const upsertLeads = (
       } else if (current_sheet_name !== sheet_name) {
         // TODO
       } else {
-        updateLeadInSameSheet(
+        const sheet = getSheetFromName(ss, current_sheet_name, nameSheetCache);
+        const headers = getHeaderFromCache(
           ss,
           current_sheet_name,
-          lead,
           headersCache,
           nameSheetCache
         );
+        const { row, row_num } = getRowNumberFromLead(sheet, lead, headers);
+        addCalculatedFields(lead, row_num, headers);
+        updateLeadInSameSheet(sheet, lead, headers, row, row_num);
       }
     } else if (year == currentYear) {
       const sheet = getSheetFromName(ss, current_sheet_name, nameSheetCache);
@@ -89,25 +92,12 @@ const upsertLeads = (
 };
 
 const updateLeadInSameSheet = (
-  ss: GoogleAppsScript.Spreadsheet.Spreadsheet,
-  current_sheet_name: string,
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
   lead: IQWLead,
-  headerCache: IHeadersCache,
-  cacheSheet: ISheetCache
+  headers: IHeaderIndexes,
+  row: string[],
+  row_num: number
 ) => {
-  const sheet = getSheetFromName(ss, current_sheet_name, cacheSheet);
-  const headers = getHeaderFromCache(
-    ss,
-    current_sheet_name,
-    headerCache,
-    cacheSheet
-  );
-  const data = sheet.getDataRange().getValues();
-  const { row, row_num } = getLeadFromLeadId(
-    lead['Id'],
-    data,
-    headers['Id'].index
-  );
   if (row_num == -1) return;
   for (const key in headers) {
     if (Object.prototype.hasOwnProperty.call(headers, key)) {
@@ -118,6 +108,15 @@ const updateLeadInSameSheet = (
       }
     }
   }
+};
+
+const getRowNumberFromLead = (
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  lead: IQWLead,
+  headers: IHeaderIndexes
+) => {
+  const data = sheet.getDataRange().getValues();
+  return getLeadFromLeadId(lead['Id'], data, headers['Id'].index);
 };
 
 const getSheetNameFromLead = (sale_type: string, monthNumber: number) => {
@@ -281,6 +280,8 @@ const getQWLeads = (url: string, year: number) => {
         const timestamp = element[indexes[QW_KEY_NAMES.TIMESTAMP].index];
         const aos_date = element[indexes[QW_KEY_NAMES.AOS_DATE].index];
         const agent_2 = element[indexes[QW_KEY_NAMES.QW_AGENT_2].index];
+        const commission_2 = element[indexes[QW_KEY_NAMES.COMMISSION_2].index];
+
         leads.push({
           [KEY_NAMES.ID]: id,
           [KEY_NAMES.AGENT_NAME]: agent_name,
@@ -295,6 +296,7 @@ const getQWLeads = (url: string, year: number) => {
           [KEY_NAMES.SETTLEMENT_DATE]: s_date,
           [KEY_NAMES.AOS_DATE]: aos_date,
           [KEY_NAMES.QW_AGENT_2]: agent_2,
+          [KEY_NAMES.COMMISSION_2]: commission_2,
         });
       }
     } catch (error) {

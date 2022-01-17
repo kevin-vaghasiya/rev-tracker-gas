@@ -35,6 +35,7 @@ const KEY_NAMES = {
   REVENUE_FOR_SPLIT: 'Revenue for Split',
   AGENT_REVENUE: 'Agent Revenue',
   QW_REVENUE: 'QW Revenue',
+  COMMISSION_2: 'Commission Rate 2',
   CALCULATED_COMMISSION_2: 'Calculated Commission 2',
   MANUAL_COMMISSION_2: 'Manual Commission 2',
   AUTOMATIC_DEDUCTION_2: 'Automatic Deduction 2',
@@ -58,7 +59,7 @@ const QW_KEY_NAMES = {
   SETTLEMENT_DATE: 'Settlement Date',
   AOS_DATE: 'AoS Date',
   QW_AGENT_2: 'QWAgent2',
-
+  COMMISSION_2: 'Commission 2',
   // DRIVE_FOLDER_URL: 'Drive Folder Url',
   // SUBMITTED_TIME: 'Submitted Time',
   // SETTLEMENT_ADDRESS: 'Settlement Address',
