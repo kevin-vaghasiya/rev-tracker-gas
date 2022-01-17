@@ -65,3 +65,32 @@ const getFormattedDate = (dt: number | string) => {
     return '';
   }
 };
+
+const getLeadFromLeadId = (id: string, data: string[][], idIndex: number) => {
+  for (let i = 1; i < data.length; i++) {
+    const lead_id = data[i][idIndex];
+    if (id !== lead_id) continue;
+    return { row_num: i + 1, row: data[i] };
+  }
+  return { row_num: -1, row: [] };
+};
+
+const columnToLetter = (column: number) => {
+  let temp,
+    letter = '';
+  while (column > 0) {
+    temp = (column - 1) % 26;
+    letter = String.fromCharCode(temp + 65) + letter;
+    column = (column - temp - 1) / 26;
+  }
+  return letter;
+};
+
+const getDeductionFromSaleType = (sale_type: string) => {
+  if (sale_type == SALE_TYPES.CO_OP_LISTING)
+    return AUTOMATIC_DEDUCTIONS.CO_OP_QW;
+  if (sale_type == SALE_TYPES.QW_LISTING_CO_OP)
+    return AUTOMATIC_DEDUCTIONS.QW_CO_OP;
+  if (sale_type == SALE_TYPES.QW_LISTING_QW) return AUTOMATIC_DEDUCTIONS.QW_QW;
+  return 0;
+};

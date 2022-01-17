@@ -34,32 +34,42 @@ const upsertLeads = (
   const listingSheet = ss.getSheetByName(SHEET_NAMES.LISTINGS);
   for (let i = 0; i < leads.length; i++) {
     const lead = leads[i];
-    const { Id } = lead;
+    const { Id, 'Sale Type': saleType } = lead;
     const { month, year } = getMonthYearFromDate(lead['Settlement Date']);
+    const current_sheet_name = getSheetNameFromLead(saleType, month);
+    console.log({ current_sheet_name });
+
     if (cache[Id]) {
       const {
         sheet_name,
         date: { month: prevMonth },
       } = cache[Id];
-      if (year !== currentYear) {
+      if (year !== currentYear || !current_sheet_name) {
         const sheet = getSheetFromName(ss, sheet_name, nameSheetCache);
         deleteLeadFromSheetAndCache(sheet, Id, cache[Id].index, cacheSheet);
         continue;
-      } else if (month == prevMonth) {
-        //TODO update logic
+      } else if (current_sheet_name !== sheet_name) {
+        // TODO
       } else {
-        // Change Month
+        updateLeadInSameSheet(
+          ss,
+          current_sheet_name,
+          lead,
+          headersCache,
+          nameSheetCache
+        );
       }
     } else if (year == currentYear) {
+      const sheet = getSheetFromName(ss, current_sheet_name, nameSheetCache);
       const headers = getHeaderFromCache(
         ss,
-        SHEET_NAMES.LISTINGS,
+        current_sheet_name,
         headersCache,
         nameSheetCache
       );
 
       const row = new Array(34);
-      addCalculatedFields(lead);
+      addCalculatedFields(lead, sheet.getLastRow() + 1, headers);
       for (const key in headers) {
         if (Object.prototype.hasOwnProperty.call(headers, key)) {
           const header = headers[key];
@@ -67,22 +77,119 @@ const upsertLeads = (
         }
       }
       //Add Projected Rev Fields
-      listingSheet.appendRow(row);
+      sheet.appendRow(row);
       addLeadToCache(cacheSheet, {
         id: Id,
         date: { year, month },
-        sheet_name: SHEET_NAMES.LISTINGS,
+        sheet_name: current_sheet_name,
         type: lead['Sale Type'],
       });
     }
   }
 };
 
-const addCalculatedFields = (lead: IQWLead) => {
-  const projectedRev =
-    ((Number(lead['Sale Price']) * Number(lead['Commission Rate'])) / 100) *
-    0.65; // AGENT COMMISSION
-  lead[KEY_NAMES.PROJECTED_REV] = projectedRev;
+const updateLeadInSameSheet = (
+  ss: GoogleAppsScript.Spreadsheet.Spreadsheet,
+  current_sheet_name: string,
+  lead: IQWLead,
+  headerCache: IHeadersCache,
+  cacheSheet: ISheetCache
+) => {
+  const sheet = getSheetFromName(ss, current_sheet_name, cacheSheet);
+  const headers = getHeaderFromCache(
+    ss,
+    current_sheet_name,
+    headerCache,
+    cacheSheet
+  );
+  const data = sheet.getDataRange().getValues();
+  const { row, row_num } = getLeadFromLeadId(
+    lead['Id'],
+    data,
+    headers['Id'].index
+  );
+  if (row_num == -1) return;
+  for (const key in headers) {
+    if (Object.prototype.hasOwnProperty.call(headers, key)) {
+      const header = headers[key];
+      if (!header) continue;
+      if ((lead[key] == 0 || lead[key]) && row[header.index] != lead[key]) {
+        sheet.getRange(row_num, header.index + 1).setValue(lead[key]);
+      }
+    }
+  }
+};
+
+const getSheetNameFromLead = (sale_type: string, monthNumber: number) => {
+  if (sale_type == SALE_TYPES.QW_LISTING_ACTIVE) return SHEET_NAMES.LISTINGS;
+  const month = MONTH_NAMES[monthNumber];
+  if (sale_type == SALE_TYPES.QW_LISTING_CO_OP) return `${month} QW|Co-Op`;
+  if (sale_type == SALE_TYPES.CO_OP_LISTING) return `${month} Co-Op|QW`;
+  if (sale_type == SALE_TYPES.QW_LISTING_QW) return `${month} QW|QW`;
+  return '';
+};
+
+const addCalculatedFields = (
+  lead: IQWLead,
+  row_num: number,
+  headers: IHeaderIndexes
+) => {
+  const sale_type = lead['Sale Type'];
+  if (sale_type == SALE_TYPES.QW_LISTING_ACTIVE) {
+    const projectedRev =
+      ((Number(lead['Sale Price']) * Number(lead['Commission Rate'])) / 100) *
+      0.65; // AGENT COMMISSION
+    lead[KEY_NAMES.PROJECTED_REV] = projectedRev;
+  } else {
+    const manual_commission_index = headers[KEY_NAMES.MANUAL_COMMISSION].index;
+    const manual_commission_column =
+      columnToLetter(manual_commission_index + 1) + `${row_num}`;
+
+    const rev =
+      (Number(lead['Sale Price']) * Number(lead['Commission Rate'])) / 100;
+    const commission = `=IF(${manual_commission_column}>0,0,${rev})`;
+    lead[KEY_NAMES.CALCULATED_COMMISSION] = commission;
+
+    const manual_deduction_index = headers[KEY_NAMES.MANUAL_DEDUCTION].index;
+    const manual_deduction_column =
+      columnToLetter(manual_deduction_index + 1) + `${row_num}`;
+    const deduction = getDeductionFromSaleType(sale_type);
+
+    lead[
+      KEY_NAMES.AUTOMATIC_DEDUCTION
+    ] = `=IF(${manual_deduction_column}>0,0,${deduction})`;
+
+    lead[
+      KEY_NAMES.REVENUE_FOR_SPLIT
+    ] = `=IF(${manual_commission_column}>0,${manual_commission_column},${rev})-IF(${manual_deduction_column}>0,${manual_deduction_column},${deduction})`;
+
+    // sale type QW | QW
+    if (sale_type == SALE_TYPES.QW_LISTING_QW) {
+      const manual_commission_index_2 =
+        headers[KEY_NAMES.MANUAL_COMMISSION_2].index;
+      const manual_commission_column_2 =
+        columnToLetter(manual_commission_index_2 + 1) + `${row_num}`;
+
+      const rev =
+        (Number(lead['Sale Price']) * Number(lead['Commission Rate'])) / 100;
+      const commission = `=IF(${manual_commission_column_2}>0,0,${rev})`;
+      lead[KEY_NAMES.CALCULATED_COMMISSION_2] = commission;
+
+      const manual_deduction_index_2 =
+        headers[KEY_NAMES.MANUAL_DEDUCTION_2].index;
+      const manual_deduction_column_2 =
+        columnToLetter(manual_deduction_index_2 + 1) + `${row_num}`;
+      const deduction = getDeductionFromSaleType(sale_type);
+
+      lead[
+        KEY_NAMES.AUTOMATIC_DEDUCTION_2
+      ] = `=IF(${manual_deduction_column_2}>0,0,${deduction})`;
+
+      lead[
+        KEY_NAMES.REVENUE_FOR_SPLIT_2
+      ] = `=IF(${manual_commission_column_2}>0,${manual_commission_column_2},${rev})-IF(${manual_deduction_column_2}>0,${manual_deduction_column_2},${deduction})`;
+    }
+  }
 };
 
 const addLeadToCache = (

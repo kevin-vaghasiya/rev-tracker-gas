@@ -27,7 +27,21 @@ const KEY_NAMES = {
   SETTLEMENT_DATE: 'Settlement Date',
   AOS_DATE: 'AoS Date',
   QW_AGENT_2: 'QWAgent2',
-  PROJECTED_REV:'Projected Rev'
+  PROJECTED_REV: 'Projected Rev',
+  CALCULATED_COMMISSION: 'Calculated Commission',
+  MANUAL_COMMISSION: 'Manual Commission',
+  AUTOMATIC_DEDUCTION: 'Automatic Deduction',
+  MANUAL_DEDUCTION: 'Manual Deductions',
+  REVENUE_FOR_SPLIT: 'Revenue for Split',
+  AGENT_REVENUE: 'Agent Revenue',
+  QW_REVENUE: 'QW Revenue',
+  CALCULATED_COMMISSION_2: 'Calculated Commission 2',
+  MANUAL_COMMISSION_2: 'Manual Commission 2',
+  AUTOMATIC_DEDUCTION_2: 'Automatic Deduction 2',
+  MANUAL_DEDUCTION_2: 'Manual Deductions 2',
+  REVENUE_FOR_SPLIT_2: 'Revenue for Split 2',
+  AGENT_REVENUE_2: 'Agent Revenue 2',
+  QW_REVENUE_2: 'QW Revenue 2',
 };
 
 const QW_KEY_NAMES = {
@@ -103,6 +117,12 @@ const SALE_TYPES = {
   QW_LISTING_ACTIVE: 'QW Listing (Active/Coming Soon)',
   QW_NO_LONGER: 'QW No Longer Listed (WTH, EXP, etc)',
   FALL_THROUGH: 'Fallthrough Transaction',
+};
+
+const AUTOMATIC_DEDUCTIONS = {
+  CO_OP_QW: 72.5,
+  QW_CO_OP: 60,
+  QW_QW: 30,
 };
 
 const SEND_EMAIL_AFTER_HOURS = 24;
