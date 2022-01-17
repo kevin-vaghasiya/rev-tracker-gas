@@ -47,15 +47,16 @@ interface IQWLead {
 // }
 
 interface ICache {
-  [key: string]: {
-    date: {
-      month: number;
-      year: number;
-    };
-    sheet_name: string;
-    type: string;
-    index: number;
+  date: {
+    month: number;
+    year: number;
   };
+  sheet_name: string;
+  type: string;
+  index: number;
+}
+interface ICacheData {
+  [key: string]: ICache;
 }
 
 interface ISheetCache {
@@ -64,4 +65,13 @@ interface ISheetCache {
 
 interface IHeadersCache {
   [key: string]: IHeaderIndexes;
+}
+
+interface IAgentsData {
+  [key: string]: {
+    q1: number;
+    q2: number;
+    q3: number;
+    q4: number;
+  };
 }

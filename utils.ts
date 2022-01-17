@@ -94,3 +94,28 @@ const getDeductionFromSaleType = (sale_type: string) => {
   if (sale_type == SALE_TYPES.QW_LISTING_QW) return AUTOMATIC_DEDUCTIONS.QW_QW;
   return 0;
 };
+
+const calculateAgentsCommission = (
+  agent_name: string,
+  aos_date: string,
+  agentsData: IAgentsData
+) => {
+  if (!agent_name || !agentsData[agent_name]) return 0;
+  const agent = agentsData[agent_name];
+  const date = new Date(aos_date);
+  const month = date.getMonth();
+  if (month <= 2) return agent.q1;
+  if (month >= 3 && month <= 5) return agent.q2;
+  if (month >= 6 && month <= 8) return agent.q3;
+  if (month >= 9 && month <= 11) return agent.q4;
+  return 0;
+};
+
+const getSheetNameFromLead = (sale_type: string, monthNumber: number) => {
+  if (sale_type == SALE_TYPES.QW_LISTING_ACTIVE) return SHEET_NAMES.LISTINGS;
+  const month = MONTH_NAMES[monthNumber];
+  if (sale_type == SALE_TYPES.QW_LISTING_CO_OP) return `${month} QW|Co-Op`;
+  if (sale_type == SALE_TYPES.CO_OP_LISTING) return `${month} Co-Op|QW`;
+  if (sale_type == SALE_TYPES.QW_LISTING_QW) return `${month} QW|QW`;
+  return '';
+};
