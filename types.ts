@@ -30,22 +30,6 @@ interface IQWLead {
   QWAgent2: string;
 }
 
-// interface IQWLead {
-//   id: string;
-//   timestamp: string;
-//   sale_type: string;
-//   property_address: string;
-//   agent_name: string;
-//   sale_price: number;
-//   commission: number;
-//   mgt_notes: string;
-//   doc1_link: string;
-//   mls_no: string;
-//   settlement_date: string;
-//   aos_date: string;
-//   agent_2: string;
-// }
-
 interface ICache {
   date: {
     month: number;

@@ -21,8 +21,8 @@ const KEY_NAMES = {
   AGENT_NAME: 'Agent Name',
   SALE_PRICE: 'Sale Price',
   COMMISSION_RATE: 'Commission Rate',
-  MGT_NOTES: 'MNotes',
-  DOC1: 'Doc1 link',
+  MGT_NOTES: 'MGT Notes Link',
+  DOC1: 'Doc 1 Link',
   MLS_NO: 'MLS No',
   ID: 'Id',
   SETTLEMENT_DATE: 'Settlement Date',
@@ -70,28 +70,6 @@ const QW_KEY_NAMES = {
   COMMISSION_2: 'Commission 2',
 };
 
-const DEFAULT_SCRIPT_KEYS = {
-  DRIVE_FOLDER_URL: 'Drive Folder Url',
-  SUBMITTED_TIME: 'Submitted Time',
-  DOC_LINK_0: 'Doc0 link',
-  DOC_LINK_1: 'Doc1 link',
-  DOC_LINK_2: 'Doc2 link',
-  DOC_LINK_3: 'Doc3 link',
-  DOC_LINK_4: 'Doc4 link',
-  DOC_LINK_5: 'Doc5 link',
-  DOC_LINK_6: 'Doc6 link',
-  DOC_LINK_7: 'Doc7 link',
-  FORM_EDIT_URL: 'Form Response Edit URL',
-  TIMESTAMP: 'Timestamp',
-  EVENT_ID_1: 'Event Id 1',
-  EVENT_ID_2: 'Event Id 2',
-  EVENT_ID_3: 'Event Id 3',
-  EVENT_ID_4: 'Event Id 4',
-  EVENT_ID_5: 'Event Id 5',
-  ID: 'Id',
-  CHANGED_FIELDS: 'Changed Fields',
-};
-
 const SALE_TYPES = {
   QW_LISTING_CO_OP: 'QW Listing | CO-OP Sale',
   QW_LISTING_QW: 'QW Listing | QW Sale',
@@ -135,7 +113,7 @@ const HEADERS = {
     'Projected Rev',
     'MGT Notes Link',
     'Doc 1 Link',
-    '	MLS#',
+    'MLS No',
     'Id',
   ],
   QW_CO_OP: [
@@ -206,7 +184,7 @@ const HEADERS = {
     'QW Revenue 2',
     'MGT Notes Link',
     'Doc 1 Link',
-    'MLS#',
+    'MLS No',
     'Id',
   ],
   AGENT: [
