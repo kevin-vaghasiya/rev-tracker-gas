@@ -67,11 +67,28 @@ interface IHeadersCache {
   [key: string]: IHeaderIndexes;
 }
 
-interface IAgentsData {
+interface IAgentsSplitData {
   [key: string]: {
     q1: number;
     q2: number;
     q3: number;
     q4: number;
   };
+}
+
+interface IAgentLead {
+  Id: string;
+  'Sale Type': string;
+  'Property Address': string;
+  'Sale Price': string;
+  'Settlement Date': string;
+  'AoS Date': string;
+  Agent: string;
+  Commission: number;
+  Deductions: number;
+  Revenue: number;
+}
+
+interface IAgentsData {
+  [key: string]: IAgentLead[];
 }

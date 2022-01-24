@@ -4,6 +4,7 @@ const SHEET_NAMES = {
   SPLITS: 'Splits',
   CACHE: 'Cache',
   ERROR_LOGS: 'error_logs',
+  ALL_DATA:'All Data'
 };
 
 const QWBT_SHEET_NAMES = {
@@ -26,7 +27,7 @@ const KEY_NAMES = {
   ID: 'Id',
   SETTLEMENT_DATE: 'Settlement Date',
   AOS_DATE: 'AoS Date',
-  QW_AGENT_2: 'QWAgent2',
+  QW_AGENT_2: 'QW Agent 2',
   PROJECTED_REV: 'Projected Rev',
   CALCULATED_COMMISSION: 'Calculated Commission',
   MANUAL_COMMISSION: 'Manual Commission',
@@ -206,6 +207,17 @@ const HEADERS = {
     'MGT Notes Link',
     'Doc 1 Link',
     'MLS#',
+    'Id',
+  ],
+  AGENT: [
+    'Sale Type',
+    'Property Address',
+    'AoS Date',
+    'Settlement Date',
+    'Sale Price',
+    'Commission',
+    'Deductions',
+    'Revenue',
     'Id',
   ],
 };

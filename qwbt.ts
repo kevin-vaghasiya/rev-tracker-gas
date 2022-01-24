@@ -51,5 +51,6 @@ const getChangeLogIds = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet) => {
     if (ids.indexOf(lead_id) != -1) continue;
     ids.push(lead_id);
   }
+  // changeLogSheet.clear(); //TODO 
   return ids;
 };

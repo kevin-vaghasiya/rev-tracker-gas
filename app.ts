@@ -1,27 +1,27 @@
 const calculateRevenue = () => {
   const ss = SpreadsheetApp.getActive();
-  try {
-    const { year, qw_sheet_url } = getConfigData(ss);
-    const leads: IQWLead[] = getQWLeads(qw_sheet_url, year);
-    if (!leads.length) return;
+  // try {
+  const { year, qw_sheet_url } = getConfigData(ss);
+  const leads: IQWLead[] = getQWLeads(qw_sheet_url, year);
+  if (!leads.length) return;
 
-    const nameSheetCache: ISheetCache = {};
-    const headersCache: IHeadersCache = {};
-    const { cache, cacheSheet } = getCacheSheetAndData(ss);
-    const agents_data = getAgentsData(ss);
-    upsertLeads(
-      ss,
-      leads,
-      year,
-      cache,
-      cacheSheet,
-      nameSheetCache,
-      headersCache,
-      agents_data
-    );
-  } catch (error) {
-    SpreadsheetApp.getUi().alert(error);
-  }
+  const nameSheetCache: ISheetCache = {};
+  const headersCache: IHeadersCache = {};
+  const { cache, cacheSheet } = getCacheSheetAndData(ss);
+  const agents_data = getAgentsData(ss);
+  upsertLeads(
+    ss,
+    leads,
+    year,
+    cache,
+    cacheSheet,
+    nameSheetCache,
+    headersCache,
+    agents_data
+  );
+  // } catch (error) {
+  //   SpreadsheetApp.getUi().alert(error);
+  // }
 };
 //TODO error handling
 
@@ -33,7 +33,7 @@ const upsertLeads = (
   cacheSheet: GoogleAppsScript.Spreadsheet.Sheet,
   nameSheetCache: ISheetCache,
   headersCache: IHeadersCache,
-  agents_data: IAgentsData
+  agents_data: IAgentsSplitData
 ) => {
   for (let i = 0; i < leads.length; i++) {
     const lead = leads[i];
@@ -108,7 +108,7 @@ const addLeadToSheet = (
   lead: IQWLead,
   nameSheetCache: ISheetCache,
   headersCache: IHeadersCache,
-  agentsData: IAgentsData
+  agentsData: IAgentsSplitData
 ) => {
   const sheet = getSheetFromName(ss, current_sheet_name, nameSheetCache);
   const headers = getHeaderFromCache(
@@ -137,7 +137,7 @@ const updateLeadInDifferentSheet = (
   cacheSheet: GoogleAppsScript.Spreadsheet.Sheet,
   nameSheetCache: ISheetCache,
   headersCache: IHeadersCache,
-  agentsData: IAgentsData
+  agentsData: IAgentsSplitData
 ) => {
   const sheet = getSheetFromName(ss, sheet_name, nameSheetCache);
   const headers = getHeaderFromCache(
@@ -185,7 +185,7 @@ const updateLeadInSameSheet = (
   lead: IQWLead,
   nameSheetCache: ISheetCache,
   headersCache: IHeadersCache,
-  agentsData: IAgentsData
+  agentsData: IAgentsSplitData
 ) => {
   const sheet = getSheetFromName(ss, current_sheet_name, nameSheetCache);
   const headers = getHeaderFromCache(
@@ -221,31 +221,35 @@ const addCalculatedFields = (
   lead: IQWLead,
   row_num: number,
   headers: IHeaderIndexes,
-  agentsData: IAgentsData
+  agentsData: IAgentsSplitData
 ) => {
-  const sale_type = lead['Sale Type'];
+  const sale_type = lead[KEY_NAMES.SALE_TYPE];
   const agent_commission = calculateAgentsCommission(
-    lead['Agent Name'],
-    lead['AoS Date'],
+    lead[KEY_NAMES.AGENT_NAME],
+    lead[KEY_NAMES.AOS_DATE],
     agentsData
   );
 
   if (sale_type == SALE_TYPES.QW_LISTING_ACTIVE) {
     const projectedRev =
-      ((Number(lead['Sale Price']) * Number(lead['Commission Rate'])) / 100) *
+      ((Number(lead[KEY_NAMES.SALE_PRICE]) *
+        Number(lead[KEY_NAMES.COMMISSION_RATE])) /
+        100) *
       agent_commission; // AGENT COMMISSION
     lead[KEY_NAMES.PROJECTED_REV] = projectedRev;
   } else {
-    const manual_commission_index = headers[KEY_NAMES.MANUAL_COMMISSION].index;
+    const manual_commission_index = headers[KEY_NAMES.MANUAL_COMMISSION]?.index;
     const manual_commission_column =
       columnToLetter(manual_commission_index + 1) + `${row_num}`;
 
     const rev =
-      (Number(lead['Sale Price']) * Number(lead['Commission Rate'])) / 100;
+      (Number(lead[KEY_NAMES.SALE_PRICE]) *
+        Number(lead[KEY_NAMES.COMMISSION_RATE])) /
+      100;
     const commission = `=IF(${manual_commission_column}>0,0,${rev})`;
     lead[KEY_NAMES.CALCULATED_COMMISSION] = commission;
 
-    const manual_deduction_index = headers[KEY_NAMES.MANUAL_DEDUCTION].index;
+    const manual_deduction_index = headers[KEY_NAMES.MANUAL_DEDUCTION]?.index;
     const manual_deduction_column =
       columnToLetter(manual_deduction_index + 1) + `${row_num}`;
     const deduction = getDeductionFromSaleType(sale_type);
@@ -258,7 +262,7 @@ const addCalculatedFields = (
       KEY_NAMES.REVENUE_FOR_SPLIT
     ] = `=IF(${manual_commission_column}>0,${manual_commission_column},${rev})-IF(${manual_deduction_column}>0,${manual_deduction_column},${deduction})`;
 
-    const revenue_index = headers[KEY_NAMES.REVENUE_FOR_SPLIT].index;
+    const revenue_index = headers[KEY_NAMES.REVENUE_FOR_SPLIT]?.index;
     const revenue_column = columnToLetter(revenue_index + 1) + `${row_num}`;
     lead[KEY_NAMES.AGENT_REVENUE] = `=${revenue_column}*${agent_commission}`;
     lead[KEY_NAMES.QW_REVENUE] = `=${revenue_column}*1/${agent_commission}`;
@@ -266,17 +270,19 @@ const addCalculatedFields = (
     // sale type QW | QW
     if (sale_type == SALE_TYPES.QW_LISTING_QW) {
       const manual_commission_index_2 =
-        headers[KEY_NAMES.MANUAL_COMMISSION_2].index;
+        headers[KEY_NAMES.MANUAL_COMMISSION_2]?.index;
       const manual_commission_column_2 =
         columnToLetter(manual_commission_index_2 + 1) + `${row_num}`;
 
       const rev =
-        (Number(lead['Sale Price']) * Number(lead['Commission Rate'])) / 100;
+        (Number(lead[KEY_NAMES.SALE_PRICE]) *
+          Number(lead[KEY_NAMES.COMMISSION_2])) /
+        100;
       const commission = `=IF(${manual_commission_column_2}>0,0,${rev})`;
       lead[KEY_NAMES.CALCULATED_COMMISSION_2] = commission;
 
       const manual_deduction_index_2 =
-        headers[KEY_NAMES.MANUAL_DEDUCTION_2].index;
+        headers[KEY_NAMES.MANUAL_DEDUCTION_2]?.index;
       const manual_deduction_column_2 =
         columnToLetter(manual_deduction_index_2 + 1) + `${row_num}`;
       const deduction = getDeductionFromSaleType(sale_type);
@@ -290,11 +296,11 @@ const addCalculatedFields = (
       ] = `=IF(${manual_commission_column_2}>0,${manual_commission_column_2},${rev})-IF(${manual_deduction_column_2}>0,${manual_deduction_column_2},${deduction})`;
 
       const agent2Commission = calculateAgentsCommission(
-        lead['QWAgent2'],
-        lead['AoS Date'],
+        lead[KEY_NAMES.QW_AGENT_2],
+        lead[KEY_NAMES.AOS_DATE],
         agentsData
       );
-      const revenue_2_index = headers[KEY_NAMES.REVENUE_FOR_SPLIT_2].index;
+      const revenue_2_index = headers[KEY_NAMES.REVENUE_FOR_SPLIT_2]?.index;
       const revenue_2_column =
         columnToLetter(revenue_2_index + 1) + `${row_num}`;
       lead[
@@ -403,30 +409,31 @@ const getQWLeads = (url: string, year: number) => {
     try {
       const element = data[i];
       if (!element[0]) continue;
-      const id = element[indexes[QW_KEY_NAMES.ID].index];
-      const sale_type = element[indexes[QW_KEY_NAMES.SALE_TYPE].index];
+      const id = element[indexes[QW_KEY_NAMES.ID]?.index];
+      const sale_type = element[indexes[QW_KEY_NAMES.SALE_TYPE]?.index];
       let s_date = null;
       if (sale_type == SALE_TYPES.QW_LISTING_ACTIVE)
-        s_date = element[indexes[QW_KEY_NAMES.TIMESTAMP].index];
-      else s_date = element[indexes[QW_KEY_NAMES.SETTLEMENT_DATE].index];
+        s_date = element[indexes[QW_KEY_NAMES.TIMESTAMP]?.index];
+      else s_date = element[indexes[QW_KEY_NAMES.SETTLEMENT_DATE]?.index];
       const s_year = new Date(s_date).getFullYear();
 
       if (
-        (id && change_log_ids.indexOf(id) !== -1) ||
+        (id && change_log_ids?.indexOf(id) !== -1) ||
         (s_date && year == s_year && validateSaleType(sale_type)) //TODO only add specific sale types
       ) {
-        const agent_name = element[indexes[QW_KEY_NAMES.AGENT_NAME].index];
-        const commission = element[indexes[QW_KEY_NAMES.COMMISSION_RATE].index];
-        const doc1_link = element[indexes[QW_KEY_NAMES.DOC1].index];
-        const mgt_notes = element[indexes[QW_KEY_NAMES.MGT_NOTES].index];
-        const mls_no = element[indexes[QW_KEY_NAMES.MLS_NO].index];
+        const agent_name = element[indexes[QW_KEY_NAMES.AGENT_NAME]?.index];
+        const commission =
+          element[indexes[QW_KEY_NAMES.COMMISSION_RATE]?.index];
+        const doc1_link = element[indexes[QW_KEY_NAMES.DOC1]?.index];
+        const mgt_notes = element[indexes[QW_KEY_NAMES.MGT_NOTES]?.index];
+        const mls_no = element[indexes[QW_KEY_NAMES.MLS_NO]?.index];
         const property_address =
-          element[indexes[QW_KEY_NAMES.PROPERTY_ADDRESS].index];
-        const sale_price = element[indexes[QW_KEY_NAMES.SALE_PRICE].index];
-        const timestamp = element[indexes[QW_KEY_NAMES.TIMESTAMP].index];
-        const aos_date = element[indexes[QW_KEY_NAMES.AOS_DATE].index];
-        const agent_2 = element[indexes[QW_KEY_NAMES.QW_AGENT_2].index];
-        const commission_2 = element[indexes[QW_KEY_NAMES.COMMISSION_2].index];
+          element[indexes[QW_KEY_NAMES.PROPERTY_ADDRESS]?.index];
+        const sale_price = element[indexes[QW_KEY_NAMES.SALE_PRICE]?.index];
+        const timestamp = element[indexes[QW_KEY_NAMES.TIMESTAMP]?.index];
+        const aos_date = element[indexes[QW_KEY_NAMES.AOS_DATE]?.index];
+        const agent_2 = element[indexes[QW_KEY_NAMES.QW_AGENT_2]?.index];
+        const commission_2 = element[indexes[QW_KEY_NAMES.COMMISSION_2]?.index];
 
         leads.push({
           [KEY_NAMES.ID]: id,
@@ -457,8 +464,8 @@ const getAgentsData = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet) => {
   const split_data = splitSheet
     .getRange(1, 1, splitSheet.getLastRow(), splitSheet.getLastColumn())
     .getValues();
-  const agents_data: IAgentsData = {};
-  for (let i = 0; i < split_data.length; i++) {
+  const agents_data: IAgentsSplitData = {};
+  for (let i = 1; i < split_data.length; i++) {
     const [fun, fin, l_name, email, q1, q2, q3, q4] = split_data[i];
     if (!l_name) continue;
     agents_data[l_name] = {

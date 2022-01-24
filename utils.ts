@@ -3,6 +3,7 @@ const onOpen = () => {
     .createMenu('Menu')
     .addItem('Authorize', 'authorize')
     .addItem('Test  Script', 'calculateRevenue')
+    .addItem('Agent  Script', 'updateAgentSheets')
     .addItem('Clear Cache', 'clearCache')
     .addItem('Start Script', 'startScript')
     .addItem('Stop Script', 'stopScript')
@@ -98,7 +99,7 @@ const getDeductionFromSaleType = (sale_type: string) => {
 const calculateAgentsCommission = (
   agent_name: string,
   aos_date: string,
-  agentsData: IAgentsData
+  agentsData: IAgentsSplitData
 ) => {
   if (!agent_name || !agentsData[agent_name]) return 0;
   const agent = agentsData[agent_name];
