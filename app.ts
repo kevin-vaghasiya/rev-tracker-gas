@@ -23,6 +23,7 @@ const calculateRevenue = () => {
     SpreadsheetApp.getUi().alert(error);
   }
 };
+//TODO error handling
 
 const upsertLeads = (
   ss: GoogleAppsScript.Spreadsheet.Spreadsheet,
@@ -43,11 +44,15 @@ const upsertLeads = (
     if (cache[Id]) {
       const { sheet_name } = cache[Id];
       // when year is changed => delete lead
-      if (year !== currentYear || !current_sheet_name) {
+      if (
+        year !== currentYear ||
+        !current_sheet_name ||
+        !validateSaleType(sale_type)
+      ) {
         const sheet = getSheetFromName(ss, sheet_name, nameSheetCache);
         const headers = getHeaderFromCache(
           ss,
-          current_sheet_name,
+          sheet_name,
           headersCache,
           nameSheetCache
         );
@@ -78,6 +83,7 @@ const upsertLeads = (
         );
       }
     } else if (year == currentYear) {
+      if (!validateSaleType(sale_type)) continue;
       addLeadToSheet(
         ss,
         current_sheet_name,
@@ -340,6 +346,7 @@ const deleteLeadFromSheet = (
     .getRange(1, 1, sheet.getLastRow(), sheet.getLastColumn())
     .getValues();
   const idIndex = headers[KEY_NAMES.ID]?.index;
+
   for (let i = 0; i < data.length; i++) {
     const [timestamp] = data[i];
     if (!timestamp) continue;
@@ -406,7 +413,7 @@ const getQWLeads = (url: string, year: number) => {
 
       if (
         (id && change_log_ids.indexOf(id) !== -1) ||
-        (s_date && year == s_year) //TODO only add specific sale types
+        (s_date && year == s_year && validateSaleType(sale_type)) //TODO only add specific sale types
       ) {
         const agent_name = element[indexes[QW_KEY_NAMES.AGENT_NAME].index];
         const commission = element[indexes[QW_KEY_NAMES.COMMISSION_RATE].index];

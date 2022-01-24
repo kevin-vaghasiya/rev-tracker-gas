@@ -119,3 +119,14 @@ const getSheetNameFromLead = (sale_type: string, monthNumber: number) => {
   if (sale_type == SALE_TYPES.QW_LISTING_QW) return `${month} QW|QW`;
   return '';
 };
+
+const validateSaleType = (sale_type: string) => {
+  if (
+    sale_type == SALE_TYPES.QW_LISTING_ACTIVE ||
+    sale_type == SALE_TYPES.CO_OP_LISTING ||
+    sale_type == SALE_TYPES.QW_LISTING_CO_OP ||
+    sale_type == SALE_TYPES.QW_LISTING_QW
+  )
+    return true;
+  return false;
+};
