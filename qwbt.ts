@@ -40,17 +40,21 @@ const getQwHeaderIndexes = (
 };
 
 const getChangeLogIds = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet) => {
-  const changeLogSheet = ss.getSheetByName(QWBT_SHEET_NAMES.CHANGE_LOGS);
-  const data = changeLogSheet
-    .getRange(1, 1, changeLogSheet.getLastRow(), 1)
-    .getValues();
-  const ids = [];
-  for (let i = 0; i < data.length; i++) {
-    const [lead_id] = data[i];
-    if (!lead_id) continue;
-    if (ids.indexOf(lead_id) != -1) continue;
-    ids.push(lead_id);
+  try {
+    const changeLogSheet = ss.getSheetByName(QWBT_SHEET_NAMES.CHANGE_LOGS);
+    const data = changeLogSheet
+      .getRange(1, 1, changeLogSheet.getLastRow(), 1)
+      .getValues();
+    const ids = [];
+    for (let i = 0; i < data.length; i++) {
+      const [lead_id] = data[i];
+      if (!lead_id) continue;
+      if (ids.indexOf(lead_id) != -1) continue;
+      ids.push(lead_id);
+    }
+    changeLogSheet.clear(); //TODO
+    return ids;
+  } catch (error) {
+    return [];
   }
-  // changeLogSheet.clear(); //TODO 
-  return ids;
 };

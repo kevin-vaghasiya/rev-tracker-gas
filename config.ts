@@ -4,7 +4,8 @@ const SHEET_NAMES = {
   SPLITS: 'Splits',
   CACHE: 'Cache',
   ERROR_LOGS: 'error_logs',
-  ALL_DATA:'All Data'
+  ALL_DATA: 'All Data',
+  LOGS: 'Logs',
 };
 
 const QWBT_SHEET_NAMES = {

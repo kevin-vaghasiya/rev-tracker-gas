@@ -1,27 +1,28 @@
 const calculateRevenue = () => {
   const ss = SpreadsheetApp.getActive();
-  // try {
-  const { year, qw_sheet_url } = getConfigData(ss);
-  const leads: IQWLead[] = getQWLeads(qw_sheet_url, year);
-  if (!leads.length) return;
+  try {
+    const { year, qw_sheet_url } = getConfigData(ss);
+    const leads: IQWLead[] = getQWLeads(qw_sheet_url, year);
+    if (!leads.length) return;
 
-  const nameSheetCache: ISheetCache = {};
-  const headersCache: IHeadersCache = {};
-  const { cache, cacheSheet } = getCacheSheetAndData(ss);
-  const agents_data = getAgentsData(ss);
-  upsertLeads(
-    ss,
-    leads,
-    year,
-    cache,
-    cacheSheet,
-    nameSheetCache,
-    headersCache,
-    agents_data
-  );
-  // } catch (error) {
-  //   SpreadsheetApp.getUi().alert(error);
-  // }
+    const nameSheetCache: ISheetCache = {};
+    const headersCache: IHeadersCache = {};
+    const { cache, cacheSheet } = getCacheSheetAndData(ss);
+    const agents_data = getAgentsData(ss);
+    upsertLeads(
+      ss,
+      leads,
+      year,
+      cache,
+      cacheSheet,
+      nameSheetCache,
+      headersCache,
+      agents_data
+    );
+  } catch (error) {
+    ss.getSheetByName(SHEET_NAMES.LOGS).appendRow([new Date(), String(error)]);
+    SpreadsheetApp.getUi().alert(error);
+  }
 };
 //TODO error handling
 
@@ -419,7 +420,7 @@ const getQWLeads = (url: string, year: number) => {
 
       if (
         (id && change_log_ids?.indexOf(id) !== -1) ||
-        (s_date && year == s_year && validateSaleType(sale_type)) //TODO only add specific sale types
+        (s_date && year == s_year && validateSaleType(sale_type))
       ) {
         const agent_name = element[indexes[QW_KEY_NAMES.AGENT_NAME]?.index];
         const commission =
