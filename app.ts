@@ -23,6 +23,9 @@ const calculateRevenue = () => {
     ss.getSheetByName(SHEET_NAMES.LOGS).appendRow([new Date(), String(error)]);
     SpreadsheetApp.getUi().alert(error);
   }
+  SpreadsheetApp.flush();
+  Utilities.sleep(2000);
+  updateAgentSheets();
 };
 //TODO error handling
 
@@ -236,7 +239,7 @@ const addCalculatedFields = (
       ((Number(lead[KEY_NAMES.SALE_PRICE]) *
         Number(lead[KEY_NAMES.COMMISSION_RATE])) /
         100) *
-      agent_commission; // AGENT COMMISSION
+      agent_commission; //TODO formula check
     lead[KEY_NAMES.PROJECTED_REV] = projectedRev;
   } else {
     const manual_commission_index = headers[KEY_NAMES.MANUAL_COMMISSION]?.index;
@@ -266,7 +269,7 @@ const addCalculatedFields = (
     const revenue_index = headers[KEY_NAMES.REVENUE_FOR_SPLIT]?.index;
     const revenue_column = columnToLetter(revenue_index + 1) + `${row_num}`;
     lead[KEY_NAMES.AGENT_REVENUE] = `=${revenue_column}*${agent_commission}`;
-    lead[KEY_NAMES.QW_REVENUE] = `=${revenue_column}*1/${agent_commission}`;
+    lead[KEY_NAMES.QW_REVENUE] = `=${revenue_column}*(1-${agent_commission})`;
 
     // sale type QW | QW
     if (sale_type == SALE_TYPES.QW_LISTING_QW) {
@@ -309,7 +312,7 @@ const addCalculatedFields = (
       ] = `=${revenue_2_column}*${agent2Commission}`;
       lead[
         KEY_NAMES.QW_REVENUE_2
-      ] = `=${revenue_2_column}*1/${agent2Commission}`;
+      ] = `=${revenue_2_column}*(1-${agent2Commission})`;
     }
   }
 };

@@ -2,9 +2,8 @@ const onOpen = () => {
   SpreadsheetApp.getUi()
     .createMenu('Menu')
     .addItem('Authorize', 'authorize')
-    .addItem('Test  Script', 'calculateRevenue')
-    .addItem('Agent  Script', 'updateAgentSheets')
-    .addItem('Clear Cache', 'clearCache')
+    .addItem('Calculate revenue', 'calculateRevenue')
+    // .addItem('Clear Cache', 'clearCache')
     .addItem('Start Script', 'startScript')
     .addItem('Stop Script', 'stopScript')
     .addToUi();
@@ -21,7 +20,7 @@ const authorize = () => {
 
 const startScript = () => {
   stopScript();
-  ScriptApp.newTrigger('calculateRevenue').timeBased().everyDays(21).create();
+  ScriptApp.newTrigger('calculateRevenue').timeBased().everyHours(1).create();
   SpreadsheetApp.getUi().alert('Script Started Successfully.');
 };
 
