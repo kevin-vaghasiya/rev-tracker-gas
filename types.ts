@@ -71,8 +71,17 @@ interface IAgentLead {
   Commission: number;
   Deductions: number;
   Revenue: number;
+  QW_revenue: number;
 }
 
 interface IAgentsData {
   [key: string]: IAgentLead[];
+}
+
+interface ITotals {
+  volume: number[];
+  b_side: number[];
+  s_side: number[];
+  rev: number[];
+  qw_rev: number[];
 }

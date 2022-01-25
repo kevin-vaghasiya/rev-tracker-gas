@@ -3,6 +3,7 @@ const onOpen = () => {
     .createMenu('Menu')
     .addItem('Authorize', 'authorize')
     .addItem('Calculate revenue', 'calculateRevenue')
+    .addItem('Calculate DashBoard', 'updateAgentSheets')
     // .addItem('Clear Cache', 'clearCache')
     .addItem('Start Script', 'startScript')
     .addItem('Stop Script', 'stopScript')
@@ -86,7 +87,11 @@ const columnToLetter = (column: number) => {
   return letter;
 };
 
-const getDeductionFromSaleType = (sale_type: string) => {
+const getDeductionFromSaleType = (
+  sale_type: string,
+  agent_2: boolean = false
+) => {
+  if (agent_2) AUTOMATIC_DEDUCTIONS.QW_QW_2;
   if (sale_type == SALE_TYPES.CO_OP_LISTING)
     return AUTOMATIC_DEDUCTIONS.CO_OP_QW;
   if (sale_type == SALE_TYPES.QW_LISTING_CO_OP)

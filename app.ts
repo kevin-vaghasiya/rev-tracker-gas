@@ -289,7 +289,7 @@ const addCalculatedFields = (
         headers[KEY_NAMES.MANUAL_DEDUCTION_2]?.index;
       const manual_deduction_column_2 =
         columnToLetter(manual_deduction_index_2 + 1) + `${row_num}`;
-      const deduction = getDeductionFromSaleType(sale_type);
+      const deduction = getDeductionFromSaleType(sale_type, true);
 
       lead[
         KEY_NAMES.AUTOMATIC_DEDUCTION_2

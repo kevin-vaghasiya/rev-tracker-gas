@@ -10,13 +10,63 @@ const updateAgentSheets = () => {
     if (!l_name) continue;
     agents[l_name] = [];
   }
+  const TOTALS = {
+    volume: new Array(12).fill(0),
+    b_side: new Array(12).fill(0),
+    s_side: new Array(12).fill(0),
+    rev: new Array(12).fill(0),
+    qw_rev: new Array(12).fill(0),
+  };
   const leads: IAgentLead[] = getAllLeads(ss);
   for (let i = 0; i < leads.length; i++) {
     const { Agent } = leads[i];
+    calculateDashboard(TOTALS, leads[i]);
     if (!Agent || !agents[Agent]) continue;
     agents[Agent].push(leads[i]);
   }
-  addAgentsData(ss, agents);
+  setDashboard(ss, TOTALS);
+  // addAgentsData(ss, agents);
+};
+
+const setDashboard = (
+  ss: GoogleAppsScript.Spreadsheet.Spreadsheet,
+  TOTALS: ITotals
+) => {
+  const dashboard_sheet = ss.getSheetByName(SHEET_NAMES.DASHBOARD);
+  const { volume, b_side, s_side, rev, qw_rev } = TOTALS;
+  dashboard_sheet.getRange('B2:B13').setValues(volume.map((e) => [e]));
+  dashboard_sheet.getRange('C2:C13').setValues(b_side.map((e) => [e]));
+  dashboard_sheet.getRange('E2:E13').setValues(s_side.map((e) => [e]));
+  dashboard_sheet.getRange('H2:H13').setValues(rev.map((e) => [e]));
+  dashboard_sheet.getRange('I2:I13').setValues(qw_rev.map((e) => [e]));
+};
+
+const calculateDashboard = (TOTALS: ITotals, lead: IAgentLead) => {
+  const { b_side, qw_rev, rev, s_side, volume } = TOTALS;
+  const sale_type = lead['Sale Type'];
+  const settlement_date = lead['Settlement Date'];
+  const month = new Date(settlement_date).getMonth();
+  const sale_price = Number(lead['Sale Price']);
+  const Commission = lead['Commission'];
+  const QW_revenue = Number(lead['QW_revenue']);
+
+  if (sale_type == SALE_TYPES.CO_OP_LISTING) {
+    volume[month] = volume[month] + sale_price;
+    b_side[month] = b_side[month] + 1;
+    rev[month] = rev[month] + Commission;
+    qw_rev[month] = qw_rev[month] + QW_revenue;
+  } else if (sale_type == SALE_TYPES.QW_LISTING_CO_OP) {
+    volume[month] = volume[month] + sale_price;
+    s_side[month] = s_side[month] + 1;
+    rev[month] = rev[month] + Commission;
+    qw_rev[month] = qw_rev[month] + QW_revenue;
+  } else if (sale_type == SALE_TYPES.QW_LISTING_QW) {
+    volume[month] = volume[month] + sale_price;
+    b_side[month] = b_side[month] + 1;
+    s_side[month] = s_side[month] + 1;
+    rev[month] = rev[month] + Commission;
+    qw_rev[month] = qw_rev[month] + QW_revenue;
+  }
 };
 
 const addAgentsData = (
@@ -107,6 +157,7 @@ const getAllLeads = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet) => {
           Deductions: deduction,
           Revenue: row[header[KEY_NAMES.AGENT_REVENUE]?.index],
           Agent: row[header[KEY_NAMES.AGENT_NAME]?.index],
+          QW_revenue: row[header[KEY_NAMES.QW_REVENUE]?.index],
         });
 
         if (sale_type != SALE_TYPES.QW_LISTING_QW) continue;
@@ -125,6 +176,7 @@ const getAllLeads = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet) => {
           Deductions: deduction2,
           Revenue: row[header[KEY_NAMES.AGENT_REVENUE_2]?.index],
           Agent: row[header[KEY_NAMES.QW_AGENT_2]?.index],
+          QW_revenue: row[header[KEY_NAMES.QW_REVENUE_2]?.index],
         });
       }
     } catch (error) {

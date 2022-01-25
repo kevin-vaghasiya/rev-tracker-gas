@@ -6,6 +6,7 @@ const SHEET_NAMES = {
   ERROR_LOGS: 'error_logs',
   ALL_DATA: 'All Data',
   LOGS: 'Logs',
+  DASHBOARD: 'Dashboard',
 };
 
 const QWBT_SHEET_NAMES = {
@@ -84,6 +85,7 @@ const AUTOMATIC_DEDUCTIONS = {
   CO_OP_QW: 72.5,
   QW_CO_OP: 60,
   QW_QW: 30,
+  QW_QW_2: 42.5,
 };
 
 const SEND_EMAIL_AFTER_HOURS = 24;
