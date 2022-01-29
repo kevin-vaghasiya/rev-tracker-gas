@@ -25,7 +25,7 @@ const updateAgentSheets = () => {
     agents[Agent].push(leads[i]);
   }
   setDashboard(ss, TOTALS);
-  // addAgentsData(ss, agents);
+  addAgentsData(ss, agents);
 };
 
 const setDashboard = (
@@ -294,5 +294,6 @@ const createAgentSheet = (
 ) => {
   const sheet = ss.insertSheet(`Agent | ${agent_name}`);
   sheet.appendRow(HEADERS.AGENT);
+  sheet.getRange(1, 1, 1, sheet.getLastColumn()).setFontWeight('bold');
   return sheet;
 };

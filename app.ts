@@ -506,6 +506,7 @@ const getSheetFromName = (
     else if (name.includes('QW|Co-Op')) sheet.appendRow(HEADERS.QW_CO_OP);
     else if (name.includes('Co-Op|QW')) sheet.appendRow(HEADERS.CO_OP_QW);
     else if (name.includes('QW|QW')) sheet.appendRow(HEADERS.QW_QW);
+    sheet.getRange(1, 1, 1, sheet.getLastColumn()).setFontWeight('bold');
   }
   sheetCache[name] = sheet;
   return sheet;
