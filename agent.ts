@@ -158,6 +158,7 @@ const getAllLeads = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet) => {
           Revenue: row[header[KEY_NAMES.AGENT_REVENUE]?.index],
           Agent: row[header[KEY_NAMES.AGENT_NAME]?.index],
           QW_revenue: row[header[KEY_NAMES.QW_REVENUE]?.index],
+          'List Price': row[header[KEY_NAMES.LIST_PRICE]?.index],
         });
 
         if (sale_type != SALE_TYPES.QW_LISTING_QW) continue;
@@ -177,6 +178,7 @@ const getAllLeads = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet) => {
           Revenue: row[header[KEY_NAMES.AGENT_REVENUE_2]?.index],
           Agent: row[header[KEY_NAMES.QW_AGENT_2]?.index],
           QW_revenue: row[header[KEY_NAMES.QW_REVENUE_2]?.index],
+          'List Price': row[header[KEY_NAMES.LIST_PRICE]?.index],
         });
       }
     } catch (error) {

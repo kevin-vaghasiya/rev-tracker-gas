@@ -236,10 +236,10 @@ const addCalculatedFields = (
 
   if (sale_type == SALE_TYPES.QW_LISTING_ACTIVE) {
     const projectedRev =
-      ((Number(lead[KEY_NAMES.SALE_PRICE]) *
+      ((Number(lead[KEY_NAMES.LIST_PRICE]) *
         Number(lead[KEY_NAMES.COMMISSION_RATE])) /
         100) *
-      agent_commission; //TODO formula check
+      (1 - agent_commission); //TODO formula check
     lead[KEY_NAMES.PROJECTED_REV] = projectedRev;
   } else {
     const manual_commission_index = headers[KEY_NAMES.MANUAL_COMMISSION]?.index;
@@ -438,6 +438,7 @@ const getQWLeads = (url: string, year: number) => {
         const aos_date = element[indexes[QW_KEY_NAMES.AOS_DATE]?.index];
         const agent_2 = element[indexes[QW_KEY_NAMES.QW_AGENT_2]?.index];
         const commission_2 = element[indexes[QW_KEY_NAMES.COMMISSION_2]?.index];
+        const list_price = element[indexes[QW_KEY_NAMES.LIST_PRICE]?.index];
 
         leads.push({
           [KEY_NAMES.ID]: id,
@@ -454,6 +455,7 @@ const getQWLeads = (url: string, year: number) => {
           [KEY_NAMES.AOS_DATE]: aos_date,
           [KEY_NAMES.QW_AGENT_2]: agent_2,
           [KEY_NAMES.COMMISSION_2]: commission_2,
+          [KEY_NAMES.LIST_PRICE]: list_price,
         });
       }
     } catch (error) {

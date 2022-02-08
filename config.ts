@@ -22,6 +22,7 @@ const KEY_NAMES = {
   PROPERTY_ADDRESS: 'Property Address',
   AGENT_NAME: 'Agent Name',
   SALE_PRICE: 'Sale Price',
+  LIST_PRICE: 'List Price',
   COMMISSION_RATE: 'Commission Rate',
   MGT_NOTES: 'MGT Notes Link',
   DOC1: 'Doc 1 Link',
@@ -70,6 +71,7 @@ const QW_KEY_NAMES = {
   AOS_DATE: 'AoS Date',
   QW_AGENT_2: 'QWAgent2',
   COMMISSION_2: 'Commission 2',
+  LIST_PRICE: 'List Price',
 };
 
 const SALE_TYPES = {
@@ -111,7 +113,7 @@ const HEADERS = {
     'Sale Type',
     'Property Address',
     'Agent Name',
-    'Sale Price',
+    'List Price',
     'Commission Rate',
     'Projected Rev',
     'MGT Notes Link',

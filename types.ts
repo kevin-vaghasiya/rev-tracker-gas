@@ -65,6 +65,7 @@ interface IAgentLead {
   'Sale Type': string;
   'Property Address': string;
   'Sale Price': string;
+  'List Price': string;
   'Settlement Date': string;
   'AoS Date': string;
   Agent: string;
