@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="mt-1 p-3">
+      <label for="sheet_id" class="text-sm text-gray-600">Sheet Name</label>
+      <select
+        name="sheet_id"
+        id="sheet_id"
+        onchange="submit()"
+        required
+        class="w-full h-10 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm"
+      ></select>
+    </div>
+    <!-- <div class="mt-4 text-center">
+      <button
+        type="button"
+        onclick="submit()"
+        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        Jump
+      </button>
+    </div> -->
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+      (() => {
+        const sheets = JSON.parse('<?= sheets ?>');
+        let html = '<option selected disabled>Choose Sheet</option>';
+        for (let i = 0; i < sheets.length; i++) {
+          const { name, id } = sheets[i];
+          html += `<option id="${id}" value="${name}">${name}</option>`;
+        }
+        $('#sheet_id').html(html);
+        $('#sheet_id').select2();
+      })();
+
+      const submit = () => {
+        const name = $('#sheet_id').val();
+        if (!name) return;
+        google.script.run.withSuccessHandler().setActiveSheet(name);
+      };
+    </script>
+  </body>
+</html>

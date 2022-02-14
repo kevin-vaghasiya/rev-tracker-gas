@@ -4,7 +4,7 @@ const onOpen = () => {
     .addItem('Authorize', 'authorize')
     .addItem('Calculate revenue', 'calculateRevenue')
     .addItem('Calculate DashBoard', 'updateAgentSheets')
-    // .addItem('Clear Cache', 'clearCache')
+    .addItem('Sheet Finder', 'getSideBar')
     .addItem('Start Script', 'startScript')
     .addItem('Stop Script', 'stopScript')
     .addToUi();

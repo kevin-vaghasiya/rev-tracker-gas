@@ -62,8 +62,8 @@ const calculateDashboard = (TOTALS: ITotals, lead: IAgentLead) => {
     qw_rev[month] = qw_rev[month] + QW_revenue;
   } else if (sale_type == SALE_TYPES.QW_LISTING_QW) {
     volume[month] = volume[month] + sale_price;
-    b_side[month] = b_side[month] + 1;
-    s_side[month] = s_side[month] + 1;
+    b_side[month] = b_side[month] + 0.5;
+    s_side[month] = s_side[month] + 0.5;
     rev[month] = rev[month] + Commission;
     qw_rev[month] = qw_rev[month] + QW_revenue;
   }
